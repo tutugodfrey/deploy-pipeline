@@ -1,0 +1,90 @@
+def CHECK_PREMERGE_BUILD
+def CHECK_PREMERGE_DEPLOY_TEST
+def PREMERGE_BUILD_RESULT
+
+pipeline {
+    agent {
+        label 'kube_pod_slave'
+    }
+    parameters {
+        string(name: 'repo', description: 'The short name of the repo we are pulling in (MIS, PSE)')
+        string(name: 'repo_api_url', description: 'The api endpoint of the repo we are working with')
+        string(name: 'repo_git_url', description: 'The ssh url of the repo we are pulling in')
+        string(name: 'pr_number', description: 'The number of the pr this job is dealing with')
+        string(name: 'sha', description: 'The hash of the commit we are building')
+        string(name: 'repo_owner_name', description: 'The repo owner name')
+        }
+        
+    environment {
+        REPO_SERVICE = "${params.repo}"
+    }
+    
+    triggers {
+        GenericTrigger(
+            genericHeaderVariables: [
+                [key: 'x-github-event', regexpFilter: ''],
+            ],
+            
+            genericVariables: [
+                [key: 'action', value: '$.action'],
+                [key: 'repo', value: '$.repository.name'],
+                [key: 'repo_api_url', value: '$.repository.url'],
+                [key: 'repo_git_url', value: '$.repository.ssh_url'],
+                [key: 'pr_number', value: '$.number'],
+                [key: 'sha', value: '$.pull_request.head.sha'],
+                [key: 'repo_owner_name', value: '$.pull_request.user.login']
+            ],
+            
+            // token: 'FCD860AF48604963AA011BD85C02C1CB',
+            printContributedVariables: true,
+            regexpFilterText: '$x_github_event:$action',
+            regexpFilterExpression: '^(pull_request:opened)?$'
+        )
+    }
+
+    stages {
+        
+        stage('check pipeline to execute') {
+            steps {
+                script {
+                    CHECK_PREMERGE_BUILD=sh(script: 'stage_status=$(cat cicd/layout.json | jq -r --arg REPO_SERVICE "$REPO_SERVICE" \'.repositories[] | select(.name==$REPO_SERVICE) | select(.check_premerge|index("build")) | "TRUE" \'); echo "$stage_status"', returnStdout: true).trim()
+                    CHECK_PREMERGE_DEPLOY_TEST=sh(script: 'stage_status=$(cat cicd/layout.json | jq -r --arg REPO_SERVICE "$REPO_SERVICE" \'.repositories[] | select(.name==$REPO_SERVICE) | select(.check_premerge|index("deploy")) | "TRUE" \'); echo "$stage_status"', returnStdout: true).trim()
+                }
+
+            }
+        }
+
+        stage('Verify Build') {
+            when {
+                anyOf{                    
+                    expression {
+                        CHECK_PREMERGE_BUILD == "TRUE"
+                    }
+                }
+            }
+            steps {
+                echo "Kicking off test build..."
+                echo "${repo_git_url}"
+                script {
+                    build job: "CICD/check_premerge_build", parameters: [string(name: 'repo', value: "${params.repo}"), string(name: 'repo_api_url', value: "${params.repo_api_url}"), string(name: 'repo_git_url', value: "${params.repo_git_url}"), string(name: 'pr_number', value: "${params.pr_number}"), string(name: 'repo_owner_name', value: "${params.repo_owner_name}"), string(name: 'sha', value: "${params.sha}")], wait: true
+                }
+            }
+        }
+
+        stage('Verify Deploy') {
+            when {
+                anyOf{                    
+                    expression {
+                        CHECK_PREMERGE_DEPLOY_TEST == "TRUE"
+                    }
+                }
+            }
+            steps {
+                echo "Kicking off deploy testing..."
+                echo "${repo_git_url}"
+                build job: "CICD/check_premerge_deploy", parameters: [string(name: 'repo', value: "${params.repo}"), string(name: 'repo_api_url', value: "${params.repo_api_url}"), string(name: 'repo_git_url', value: "${params.repo_git_url}"), string(name: 'pr_number', value: "${params.pr_number}"), string(name: 'repo_owner_name', value: "${params.repo_owner_name}"), string(name: 'sha', value: "${params.sha}")], wait: false
+            }
+        }
+     }
+}
+
