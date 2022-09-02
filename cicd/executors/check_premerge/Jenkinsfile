@@ -14,11 +14,13 @@ pipeline {
         string(name: 'sha', description: 'The hash of the commit we are building')
         string(name: 'repo_owner_name', description: 'The repo owner name')
         }
-        
+
+
     environment {
         REPO_SERVICE = "${params.repo}"
     }
     
+
     triggers {
         GenericTrigger(
             genericHeaderVariables: [
@@ -87,4 +89,3 @@ pipeline {
         }
      }
 }
-
