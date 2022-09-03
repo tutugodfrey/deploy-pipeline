@@ -2,9 +2,7 @@ def DEPLOY_SERVICE
 def GO_VERSION = '1.18.1'
 
 pipeline {
-    agent {
-        any
-    }
+    agent any
     
     parameters {
         string(name: 'repo_git_url', description: 'the repo url to be downloaded ')

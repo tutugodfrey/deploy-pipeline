@@ -3,9 +3,7 @@ def CHECK_PREMERGE_DEPLOY_TEST
 def PREMERGE_BUILD_RESULT
 
 pipeline {
-    agent {
-        any
-    }
+    agent any
     parameters {
         string(name: 'repo', description: 'The short name of the repo we are pulling in (MIS, PSE)')
         string(name: 'repo_api_url', description: 'The api endpoint of the repo we are working with')
