@@ -1,0 +1,139 @@
+{
+  "repositories": [
+    {
+      "name": "CSE_prometheus",
+      "service_name": "cse_prometheus",
+      "kube_namespace": "cloudserviceendpoint",
+      "check_premerge": ["build", "deploy"],
+      "check_premerge_approved": ["deploy-int"],
+      "check_post_merge": ["cse-stage-us-south"],
+      "check_promote_stage": ["cse-stage-us-south"],
+      "github_promote_prod": ["deploy-prod"]
+    },
+    {
+      "name": "MIS",
+      "service_name": "mis",
+      "kube_namespace": "cloudserviceendpoint",
+      "check_premerge": ["build", "deploy"],
+      "check_premerge_approved": ["deploy-int"],
+      "check_post_merge": ["cse-stage-us-south"],
+      "check_promote_stage": ["cse-stage-us-south"],
+      "github_promote_prod": ["deploy-prod"]
+    },
+    {
+      "name": "PSE",
+      "service_name": "csep-bootstrap",
+      "kube_namespace": "cseproxy",
+      "check_premerge": ["build", "deploy"],
+      "check_premerge_approved": ["deploy-int"],
+      "check_post_merge": ["cse-stage-us-south"],
+      "check_promote_stage": ["cse-stage-us-south"],
+      "github_promote_prod": ["deploy-prod"]
+    }
+  ],
+  "clusters": [
+    {
+      "deploy_env_name": "cse-cicd-deploy",
+      "iks_cluster_name": "cse-cicd-deploy"
+    },
+    {
+      "deploy_env_name": "cse-cicd-integration",
+      "iks_cluster_name": "cse-cicd-integ",
+      "cse_endpoint": "cseintegapi.serviceendpoint.test.cloud.ibm.com",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-stage-us-south",
+      "iks_cluster_name": "iks-cseproxy-dev",
+      "cse_endpoint": "csestagingapi.serviceendpoint.test.cloud.ibm.com",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-stage-us-east",
+      "iks_cluster_name": "cseproxy-stage-us-east",
+      "cse_endpoint": "csestagingapi.serviceendpoint.test.cloud.ibm.com",
+      "region": "us-east"
+    },
+    {
+      "deploy_env_name": "cse-prod-us-south",
+      "iks_cluster_name": "mis-api",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-prod-us-east",
+      "iks_cluster_name": "mis-api-2",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "us-east"
+    },
+    {
+      "deploy_env_name": "cse-dev-us-south",
+      "iks_cluster_name": "mis-dev-4",
+      "cse_endpoint": "internalapi.serviceendpoint.test.cloud.ibm.com",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-dev-us-east",
+      "iks_cluster_name": "mis-dev-3",
+      "cse_endpoint": "internalapi.serviceendpoint.test.cloud.ibm.com",
+      "region": "us-east"
+    },
+    {
+      "deploy_env_name": "cse-dev-prometheus-us-south",
+      "iks_cluster_name": "Promethus",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-prod-ca-tor",
+      "iks_cluster_name": "cseproxy-prod-ca-tor",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "ca-tor"
+    },
+    {
+      "deploy_env_name": "cse-prod-eu-gb",
+      "iks_cluster_name": "cse-prod-eu-gb",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "eu-gb"
+    },
+    {
+      "deploy_env_name": "cse-prod-eu-de",
+      "iks_cluster_name": "cse-prod-eu-de",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "eu-de"
+    },
+    {
+      "deploy_env_name": "cse-prod-eu-fr2",
+      "iks_cluster_name": "cse-prod-eu-fr2",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "eu-fr2"
+    },
+    {
+      "deploy_env_name": "cse-prod-prometheus-us-east",
+      "iks_cluster_name": "Prod_Prometheus_Wdc07",
+      "region": "us-east"
+    },
+    {
+      "deploy_env_name": "cse-prod-prometheus-us-south",
+      "iks_cluster_name": "Prod_Prometheus_dal12",
+      "region": "us-south"
+    },
+    {
+      "deploy_env_name": "cse-prod-au-syd",
+      "iks_cluster_name": "cse-prod-au-syd",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "au-syd"
+    },
+    {
+      "deploy_env_name": "cse-prod-jp-osa",
+      "iks_cluster_name": "cse-prod-jp-osa",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "jp-osa"
+    },
+    {
+      "deploy_env_name": "cse-prod-jp-tok",
+      "iks_cluster_name": "cse-prod-jp-tok",
+      "cse_endpoint": "cseapi.serviceendpoint.cloud.ibm.com",
+      "region": "jp-tok"
+    }
+  ]
+}
