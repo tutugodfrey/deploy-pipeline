@@ -35,7 +35,7 @@ pipeline {
                 [key: 'repo_owner_name', value: '$.pull_request.user.login']
             ],
             
-            // token: 'FCD860AF48604963AA011BD85C02C1CB',
+            token: '123456',
             printContributedVariables: true,
             regexpFilterText: '$x_github_event:$action',
             regexpFilterExpression: '^(pull_request:opened)?$'
