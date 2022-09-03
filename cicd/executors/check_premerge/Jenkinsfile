@@ -4,7 +4,7 @@ def PREMERGE_BUILD_RESULT
 
 pipeline {
     agent {
-        label 'kube_pod_slave'
+        any
     }
     parameters {
         string(name: 'repo', description: 'The short name of the repo we are pulling in (MIS, PSE)')

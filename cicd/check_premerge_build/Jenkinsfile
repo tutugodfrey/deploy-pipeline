@@ -3,7 +3,7 @@ def GO_VERSION = '1.18.1'
 
 pipeline {
     agent {
-        label 'cicd_pod_slave'
+        any
     }
     
     parameters {
@@ -51,49 +51,49 @@ pipeline {
             }
         }
 
-        stage('dev_prepare') {
-            steps {
-                echo 'Preparing...'
-                echo "${env.REPO_SERVICE}"
-                echo "${env.REPO_GIT_URL}"
-                echo "${env.SHA}"
-                echo "${env.SHORT}"
-                echo "${env.REPO_OWNER_NAME}"
-                echo "${env.PR_NUMBER}"
-                echo "${env.GIT_REPO_NAME}"
+        // stage('dev_prepare') {
+        //     steps {
+        //         echo 'Preparing...'
+        //         echo "${env.REPO_SERVICE}"
+        //         echo "${env.REPO_GIT_URL}"
+        //         echo "${env.SHA}"
+        //         echo "${env.SHORT}"
+        //         echo "${env.REPO_OWNER_NAME}"
+        //         echo "${env.PR_NUMBER}"
+        //         echo "${env.GIT_REPO_NAME}"
                                
-                //  Pull down cse-deploy
-                dir("go/src/github.ibm.com/NetworkTribe/cse-deploy"){
-                    git branch: 'master', changelog: false, credentialsId: 'c8619393-2c6e-4729-a340-2eeb16942ef1', poll: false, url: 'git@github.ibm.com:NetworkTribe/cse-deploy.git'
-                }
+        //         //  Pull down cse-deploy
+        //         dir("go/src/github.ibm.com/NetworkTribe/cse-deploy"){
+        //             git branch: 'master', changelog: false, credentialsId: 'c8619393-2c6e-4729-a340-2eeb16942ef1', poll: false, url: 'git@github.ibm.com:NetworkTribe/cse-deploy.git'
+        //         }
 
-                //  Pull down repo PR
-                dir("go/src/github.ibm.com/NetworkTribe/${env.REPO_SERVICE}")
-                {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: "FETCH_HEAD"]],
-                        extensions: [[$class: 'LocalBranch']],
-                        userRemoteConfigs: [[
-                            refspec: "+refs/pull/${env.PR_NUMBER}/head:refs/remotes/origin/PR-${env.PR_NUMBER}",
-                            credentialsId: 'c8619393-2c6e-4729-a340-2eeb16942ef1',
-                            url: "${env.REPO_GIT_URL}"]]
-                    ])
-                }
-            }
-        }
+        //         //  Pull down repo PR
+        //         dir("go/src/github.ibm.com/NetworkTribe/${env.REPO_SERVICE}")
+        //         {
+        //             checkout([
+        //                 $class: 'GitSCM',
+        //                 branches: [[name: "FETCH_HEAD"]],
+        //                 extensions: [[$class: 'LocalBranch']],
+        //                 userRemoteConfigs: [[
+        //                     refspec: "+refs/pull/${env.PR_NUMBER}/head:refs/remotes/origin/PR-${env.PR_NUMBER}",
+        //                     credentialsId: 'c8619393-2c6e-4729-a340-2eeb16942ef1',
+        //                     url: "${env.REPO_GIT_URL}"]]
+        //             ])
+        //         }
+        //     }
+        // }
         
-        stage('dev_commit_message_enforcement'){
-            steps{
-                echo 'enforcing git commit message to the standards'
-                sh"""
-                    set +x
-                    . go/src/github.ibm.com/NetworkTribe/cse-deploy/cicd/scripts/enforce_gitcommitmsg.sh
-                    cd ${WORKSPACE}/go/src/github.ibm.com/NetworkTribe/${env.REPO_SERVICE}
-                    gitcommitmsg ${params.sha}
-                """
-            }
-        }
+        // stage('dev_commit_message_enforcement'){
+        //     steps{
+        //         echo 'enforcing git commit message to the standards'
+        //         sh"""
+        //             set +x
+        //             . go/src/github.ibm.com/NetworkTribe/cse-deploy/cicd/scripts/enforce_gitcommitmsg.sh
+        //             cd ${WORKSPACE}/go/src/github.ibm.com/NetworkTribe/${env.REPO_SERVICE}
+        //             gitcommitmsg ${params.sha}
+        //         """
+        //     }
+        // }
 
 
         stage('dev_build') {
@@ -108,8 +108,8 @@ pipeline {
                     echo 'Starting. dev_build'
                     sh """ #!/bin/bash
                         set +x
-                        cd $WORKSPACE/go/src/github.ibm.com/NetworkTribe/cse-deploy
-                        export WORKSPACE="$WORKSPACE/go/src/github.ibm.com/NetworkTribe/$REPO_SERVICE"
+                        # cd $WORKSPACE/go/src/github.ibm.com/NetworkTribe/cse-deploy
+                        # export WORKSPACE="$WORKSPACE/go/src/github.ibm.com/NetworkTribe/$REPO_SERVICE"
                         export INSTALL_VAULT=0
                         export INSTALL_IBMCLOUD=0
                         export INSTALL_KUBECTL=0
@@ -129,7 +129,8 @@ pipeline {
                         export GIT_AUTH_USER=x-oauth-basic
                         export GIT_AUTH_TOKEN=$GIT_AUTH_TOKEN
                         pwd
-                        bash -e -c '../cse-deploy/scripts/pipeline_build.sh'
+                        echo Hello world
+                        // bash -e -c '../cse-deploy/scripts/pipeline_build.sh'
                     """  
                 }
             }
@@ -184,3 +185,4 @@ pipeline {
        }
     }
 }
+
